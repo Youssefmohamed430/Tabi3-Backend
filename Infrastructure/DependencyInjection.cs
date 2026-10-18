@@ -1,6 +1,8 @@
 using Application.Abstractions.Persistence;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
+using Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,7 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddIdentityCore<Tabi3User>().AddRoles<IdentityRole>().AddEntityFrameworkStores<Tabi3DbContext>();
         return services;
     }
 }

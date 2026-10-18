@@ -1,5 +1,5 @@
 using Ardalis.Specification;
-using Domain.Common;
+using Domain.Entities.Common;
 
 namespace Application.Abstractions.Persistence;
 
@@ -17,3 +17,4 @@ public interface IRepository<TEntity> where TEntity : class, ISoftDeletable
 
     void Remove(TEntity entity);
 }
+

@@ -1,7 +1,7 @@
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using Application.Abstractions.Persistence;
-using Domain.Common;
+using Domain.Entities.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories;
@@ -41,3 +41,4 @@ internal sealed class EfRepository<TEntity>(Tabi3DbContext dbContext) : IReposit
     private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification) =>
         SpecificationEvaluator.Default.GetQuery(_entities.AsQueryable(), specification);
 }
+

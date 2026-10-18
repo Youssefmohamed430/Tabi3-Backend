@@ -1,11 +1,24 @@
 using Microsoft.EntityFrameworkCore;
-using Domain.Common;
+using Domain.Entities.Common;
+using Domain.Tenants;
+using Domain.ValueObjects;
+using Domain.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Persistence;
 
-public sealed class Tabi3DbContext(DbContextOptions<Tabi3DbContext> options) : DbContext(options)
+public sealed class Tabi3DbContext(DbContextOptions<Tabi3DbContext> options) : IdentityDbContext<Tabi3User, IdentityRole, string>(options)
 {
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+        configurationBuilder.Properties<DateTimeOffset>().HaveConversion<EgyptianDateTimeConverter>();
+        configurationBuilder.Properties<DateTimeOffset?>().HaveConversion<NullableEgyptianDateTimeConverter>();
+        configurationBuilder.Properties<Price>().HaveConversion<PriceConverter>().HavePrecision(12, 2);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -16,6 +29,12 @@ public sealed class Tabi3DbContext(DbContextOptions<Tabi3DbContext> options) : D
             if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
             {
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(CreateNotDeletedFilter(entityType.ClrType));
+                if (typeof(TenantEntity).IsAssignableFrom(entityType.ClrType))
+                    modelBuilder.Entity(entityType.ClrType)
+                        .HasOne(typeof(Tenant), nameof(TenantEntity.Tenant))
+                        .WithMany()
+                        .HasForeignKey(nameof(TenantEntity.TenantId))
+                        .OnDelete(DeleteBehavior.Restrict);
             }
         }
     }
