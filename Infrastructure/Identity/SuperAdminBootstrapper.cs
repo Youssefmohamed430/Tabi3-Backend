@@ -16,6 +16,7 @@ public static class SuperAdminBootstrapper
         var userName = configuration["BootstrapSuperAdmin:UserName"];
         var email = configuration["BootstrapSuperAdmin:Email"];
         var password = configuration["BootstrapSuperAdmin:Password"];
+        var phone = configuration["BootstrapSuperAdmin:Phone"];
 
         if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(password))
             return;
@@ -40,7 +41,8 @@ public static class SuperAdminBootstrapper
                 UserName = userName,
                 Email = email,
                 DisplayName = configuration["BootstrapSuperAdmin:DisplayName"] ?? "Super Admin",
-                PreferredLanguage = "ar"
+                PreferredLanguage = "ar",
+                PhoneNumber = phone,
             };
 
             var createResult = await userManager.CreateAsync(user, password);
