@@ -1,15 +1,25 @@
 using Infrastructure;
 using Infrastructure.Identity;
+using Tabi3_Backend.Configuration.Logging;
+using Tabi3_Backend.Configuration.RateLimiting;
+using Serilog;
+using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 LoadDotEnv(Path.Combine(builder.Environment.ContentRootPath, ".env"));
 builder.Configuration.AddEnvironmentVariables();
+
+builder.Services
+    .AddTabi3Serilog(builder.Configuration, builder.Environment)
+    .AddTabi3RateLimiting();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("DefaultConnection")))
     await app.Services.EnsureSuperAdminAsync(builder.Configuration);
@@ -20,6 +30,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseRateLimiter();
+app.Use(async (context, next) =>
+{
+    using (LogContext.PushProperty("TraceId", context.TraceIdentifier))
+        await next();
+});
 app.UseAuthorization();
 app.MapControllers();
 
