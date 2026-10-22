@@ -132,6 +132,7 @@ namespace Domain.Identity
         public ICollection<TenantMembership> InvitedMemberships { get; set; } = [];
         public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
         public ICollection<AccountToken> AccountTokens { get; set; } = [];
+        public ICollection<UserNotification> Notifications { get; set; } = [];
     }
 }
 
@@ -163,6 +164,12 @@ namespace Domain.Notifications
 {
     public sealed partial class NotificationOutbox
     {
+        public Tenant? Tenant { get; set; }
+    }
+
+    public sealed partial class UserNotification
+    {
+        public ApplicationUser User { get; set; } = null!;
         public Tenant? Tenant { get; set; }
     }
 }

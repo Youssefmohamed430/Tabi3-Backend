@@ -30,6 +30,27 @@ public sealed class NotificationOutboxConfiguration : IEntityTypeConfiguration<N
     { b.ToTable("notification_outbox", t => t.HasCheckConstraint("ck_notification_attempt_count", "\"AttemptCount\" >= 0")); b.HasKey(x => x.Id); b.Property(x => x.EventKey).HasMaxLength(256).IsRequired(); b.Property(x => x.Recipient).HasMaxLength(320).IsRequired(); b.Property(x => x.PayloadJson).HasColumnType("jsonb").IsRequired(); b.Property(x => x.LastErrorCode).HasMaxLength(128); b.HasIndex(x => new { x.TenantId, x.EventKey, x.Channel }).IsUnique().HasFilter("\"TenantId\" IS NOT NULL"); b.HasIndex(x => new { x.EventKey, x.Channel }).IsUnique().HasFilter("\"TenantId\" IS NULL"); b.HasIndex(x => new { x.Status, x.NextAttemptAt }); b.HasOne(x => x.Tenant).WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict); }
 }
 
+public sealed class UserNotificationConfiguration : IEntityTypeConfiguration<UserNotification>
+{
+    public void Configure(EntityTypeBuilder<UserNotification> b)
+    {
+        b.ToTable("user_notifications");
+        b.HasKey(x => x.Id);
+        b.Property(x => x.UserId).HasMaxLength(450).IsRequired();
+        b.Property(x => x.EventKey).HasMaxLength(256).IsRequired();
+        b.Property(x => x.Type).HasMaxLength(100).IsRequired();
+        b.Property(x => x.Title).HasMaxLength(200).IsRequired();
+        b.Property(x => x.Body).HasMaxLength(2000).IsRequired();
+        b.Property(x => x.ActionUrl).HasMaxLength(500);
+        b.HasIndex(x => new { x.UserId, x.CreatedAt });
+        b.HasIndex(x => new { x.UserId, x.CreatedAt }).HasFilter("\"ReadAt\" IS NULL");
+        b.HasIndex(x => new { x.TenantId, x.UserId, x.CreatedAt });
+        b.HasIndex(x => new { x.UserId, x.EventKey }).IsUnique();
+        b.HasOne(x => x.User).WithMany(x => x.Notifications).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        b.HasOne(x => x.Tenant).WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
 public sealed class PrintDeviceConfiguration : IEntityTypeConfiguration<PrintDevice>
 {
     public void Configure(EntityTypeBuilder<PrintDevice> b)
