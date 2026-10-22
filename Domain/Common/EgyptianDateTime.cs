@@ -1,5 +1,3 @@
-using Domain.Constants;
-
 namespace Domain.Common;
 
 /// <summary>Converts instants between UTC storage and Egypt local time.</summary>

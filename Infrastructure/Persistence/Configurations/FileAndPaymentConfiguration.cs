@@ -1,9 +1,3 @@
-using Domain.Files;
-using Domain.Payments;
-using Domain.Orders;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Infrastructure.Persistence.Configurations;
 
 public sealed class StoredFileConfiguration : IEntityTypeConfiguration<StoredFile>

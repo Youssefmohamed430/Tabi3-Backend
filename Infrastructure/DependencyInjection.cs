@@ -1,16 +1,3 @@
-using Application.Abstractions.Persistence;
-using Application.Abstractions.Storage;
-using Infrastructure.Persistence;
-using Infrastructure.Persistence.Repositories;
-using Infrastructure.Storage;
-using Domain.Identity;
-using Amazon.Runtime;
-using Amazon.S3;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Infrastructure;
 
 public static class DependencyInjection
@@ -25,7 +12,38 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddIdentityCore<Tabi3User>().AddRoles<IdentityRole>().AddEntityFrameworkStores<Tabi3DbContext>();
+        services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<Tabi3DbContext>();
+        var jwtKey = configuration["JWTKey"];
+        if (string.IsNullOrWhiteSpace(jwtKey) || System.Text.Encoding.UTF8.GetByteCount(jwtKey) < 32)
+            throw new InvalidOperationException("JWTKey must be configured and contain at least 32 UTF-8 bytes.");
+
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Issuer) && !string.IsNullOrWhiteSpace(options.Audience) && options.DurationInSeconds is > 0 and <= 3600,
+                "JWT issuer, audience, and a duration from 1 to 3600 seconds must be configured.")
+            .ValidateOnStart();
+        services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey)),
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration[$"{JwtOptions.SectionName}:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = configuration[$"{JwtOptions.SectionName}:Audience"],
+                    ValidateLifetime = true,
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true,
+                    ClockSkew = TimeSpan.Zero,
+                    NameClaimType = "sub",
+                    RoleClaimType = "role"
+                };
+            });
+        services.AddAuthorization();
+        services.AddScoped<IAccessTokenService, JwtAccessTokenService>();
 
         var storageEndpoint = configuration["Storage:Endpoint"];
         var storageRegion = configuration["Storage:Region"];

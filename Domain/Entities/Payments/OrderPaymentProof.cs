@@ -1,7 +1,3 @@
-using Domain.Enums;
-using Domain.Entities.Common;
-using Domain.ValueObjects;
-
 namespace Domain.Payments;
 
 public sealed partial class OrderPaymentProof : TenantEntity

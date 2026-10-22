@@ -6,7 +6,7 @@ using Serilog;
 using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);
-LoadDotEnv(Path.Combine(builder.Environment.ContentRootPath, ".env"));
+LoadDotEnv(builder.Environment.ContentRootPath);
 builder.Configuration.AddEnvironmentVariables();
 
 builder.Services
@@ -37,32 +37,39 @@ app.Use(async (context, next) =>
     using (LogContext.PushProperty("TraceId", context.TraceIdentifier))
         await next();
 });
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
 
-static void LoadDotEnv(string path)
+static void LoadDotEnv(string contentRootPath)
 {
-    if (!File.Exists(path))
-        return;
-
-    foreach (var line in File.ReadLines(path))
+    var directory = new DirectoryInfo(contentRootPath);
+    for (var depth = 0; directory is not null && depth < 3; depth++, directory = directory.Parent)
     {
-        var entry = line.Trim();
-        if (entry.Length == 0 || entry.StartsWith('#'))
+        var path = Path.Combine(directory.FullName, ".env");
+        if (!File.Exists(path))
             continue;
 
-        var separatorIndex = entry.IndexOf('=');
-        if (separatorIndex <= 0)
-            continue;
+        foreach (var line in File.ReadLines(path))
+        {
+            var entry = line.Trim();
+            if (entry.Length == 0 || entry.StartsWith('#'))
+                continue;
 
-        var key = entry[..separatorIndex].Trim();
-        var value = entry[(separatorIndex + 1)..].Trim();
-        if (value.Length >= 2 && value[0] == value[^1] && value[0] is '\'' or '"')
-            value = value[1..^1];
+            var separatorIndex = entry.IndexOf('=');
+            if (separatorIndex <= 0)
+                continue;
 
-        if (Environment.GetEnvironmentVariable(key) is null)
-            Environment.SetEnvironmentVariable(key, value);
+            var key = entry[..separatorIndex].Trim();
+            var value = entry[(separatorIndex + 1)..].Trim();
+            if (value.Length >= 2 && value[0] == value[^1] && value[0] is '\'' or '"')
+                value = value[1..^1];
+
+            if (Environment.GetEnvironmentVariable(key) is null)
+                Environment.SetEnvironmentVariable(key, value);
+        }
+
     }
 }

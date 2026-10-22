@@ -1,7 +1,3 @@
-using Domain.Pricing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Infrastructure.Persistence.Configurations;
 
 public sealed class PriceListItemConfiguration : IEntityTypeConfiguration<PriceListItem>

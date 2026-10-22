@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace Domain.Identity;
 
-public sealed partial class Tabi3User : IdentityUser
+public sealed partial class ApplicationUser : IdentityUser
 {
     public string DisplayName { get; set; } = string.Empty;
     public string PreferredLanguage { get; set; } = "ar";

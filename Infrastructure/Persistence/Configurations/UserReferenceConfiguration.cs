@@ -1,16 +1,3 @@
-using Domain.Audit;
-using Domain.Files;
-using Domain.Identity;
-using Domain.Orders;
-using Domain.Payments;
-using Domain.Pricing;
-using Domain.Printing;
-using Domain.Subscriptions;
-using Domain.Tenants;
-using Domain.WhatsApp;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Infrastructure.Persistence.Configurations;
 
 public sealed class OrderUserReferenceConfiguration : IEntityTypeConfiguration<Order>

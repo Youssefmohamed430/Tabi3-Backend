@@ -1,15 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using Domain.Entities.Common;
-using Domain.Tenants;
-using Domain.ValueObjects;
-using Domain.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Linq.Expressions;
-
 namespace Infrastructure.Persistence;
 
-public sealed class Tabi3DbContext(DbContextOptions<Tabi3DbContext> options) : IdentityDbContext<Tabi3User, IdentityRole, string>(options)
+public sealed class Tabi3DbContext(DbContextOptions<Tabi3DbContext> options) : IdentityDbContext<ApplicationUser, IdentityRole, string>(options)
 {
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

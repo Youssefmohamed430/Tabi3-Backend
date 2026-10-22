@@ -1,16 +1,3 @@
-using Domain.Audit;
-using Domain.Customers;
-using Domain.Files;
-using Domain.Identity;
-using Domain.Notifications;
-using Domain.Orders;
-using Domain.Payments;
-using Domain.Pricing;
-using Domain.Printing;
-using Domain.Subscriptions;
-using Domain.Tenants;
-using Domain.WhatsApp;
-
 namespace Domain.Entities.Common
 {
     public abstract partial class TenantEntity
@@ -23,20 +10,20 @@ namespace Domain.Tenants
 {
     public sealed partial class Tenant
     {
-        public Tabi3User OwnerUser { get; set; } = null!;
-        public Tabi3User? ApprovedByUser { get; set; }
+        public ApplicationUser OwnerUser { get; set; } = null!;
+        public ApplicationUser? ApprovedByUser { get; set; }
     }
 
     public sealed partial class TenantMembership
     {
-        public Tabi3User User { get; set; } = null!;
-        public Tabi3User? InvitedByUser { get; set; }
+        public ApplicationUser User { get; set; } = null!;
+        public ApplicationUser? InvitedByUser { get; set; }
     }
 
     public sealed partial class TenantRegistrationRequest
     {
-        public Tabi3User OwnerUser { get; set; } = null!;
-        public Tabi3User? DecidedByUser { get; set; }
+        public ApplicationUser OwnerUser { get; set; } = null!;
+        public ApplicationUser? DecidedByUser { get; set; }
     }
 }
 
@@ -44,7 +31,7 @@ namespace Domain.Customers
 {
     public sealed partial class Customer
     {
-        public Tabi3User? PortalUser { get; set; }
+        public ApplicationUser? PortalUser { get; set; }
     }
 }
 
@@ -52,7 +39,7 @@ namespace Domain.Pricing
 {
     public sealed partial class PriceListItem
     {
-        public Tabi3User? CreatedByUser { get; set; }
+        public ApplicationUser? CreatedByUser { get; set; }
     }
 }
 
@@ -61,7 +48,7 @@ namespace Domain.Orders
     public sealed partial class Order
     {
         public Customer Customer { get; set; } = null!;
-        public Tabi3User? CreatedByUser { get; set; }
+        public ApplicationUser? CreatedByUser { get; set; }
     }
 
     public sealed partial class OrderItem
@@ -73,20 +60,20 @@ namespace Domain.Orders
     public sealed partial class Invoice
     {
         public Order Order { get; set; } = null!;
-        public Tabi3User? IssuedByUser { get; set; }
+        public ApplicationUser? IssuedByUser { get; set; }
         public StoredFile? PdfFile { get; set; }
     }
 
     public sealed partial class CustomQuote
     {
         public Order Order { get; set; } = null!;
-        public Tabi3User CreatedByUser { get; set; } = null!;
+        public ApplicationUser CreatedByUser { get; set; } = null!;
     }
 
     public sealed partial class OrderStatusHistory
     {
         public Order Order { get; set; } = null!;
-        public Tabi3User? ActorUser { get; set; }
+        public ApplicationUser? ActorUser { get; set; }
     }
 }
 
@@ -95,7 +82,7 @@ namespace Domain.Files
     public sealed partial class StoredFile
     {
         public Order? Order { get; set; }
-        public Tabi3User? UploadedByUser { get; set; }
+        public ApplicationUser? UploadedByUser { get; set; }
     }
 }
 
@@ -105,8 +92,8 @@ namespace Domain.Payments
     {
         public Order Order { get; set; } = null!;
         public StoredFile File { get; set; } = null!;
-        public Tabi3User? SubmittedByUser { get; set; }
-        public Tabi3User? ReviewedByUser { get; set; }
+        public ApplicationUser? SubmittedByUser { get; set; }
+        public ApplicationUser? ReviewedByUser { get; set; }
     }
 }
 
@@ -115,14 +102,14 @@ namespace Domain.Subscriptions
     public sealed partial class TenantSubscription
     {
         public SaaSPlan Plan { get; set; } = null!;
-        public Tabi3User? CreatedByUser { get; set; }
+        public ApplicationUser? CreatedByUser { get; set; }
     }
 
     public sealed partial class SaaSSubscriptionPayment
     {
         public TenantSubscription Subscription { get; set; } = null!;
         public StoredFile? ProofFile { get; set; }
-        public Tabi3User? ReviewedByUser { get; set; }
+        public ApplicationUser? ReviewedByUser { get; set; }
     }
 }
 
@@ -130,16 +117,16 @@ namespace Domain.Identity
 {
     public sealed partial class RefreshToken
     {
-        public Tabi3User User { get; set; } = null!;
+        public ApplicationUser User { get; set; } = null!;
     }
 
     public sealed partial class AccountToken
     {
-        public Tabi3User User { get; set; } = null!;
+        public ApplicationUser User { get; set; } = null!;
         public TenantMembership? Membership { get; set; }
     }
 
-    public sealed partial class Tabi3User
+    public sealed partial class ApplicationUser
     {
         public ICollection<TenantMembership> Memberships { get; set; } = [];
         public ICollection<TenantMembership> InvitedMemberships { get; set; } = [];
@@ -154,7 +141,7 @@ namespace Domain.WhatsApp
     {
         public Customer? Customer { get; set; }
         public Order? LinkedOrder { get; set; }
-        public Tabi3User? AssignedUser { get; set; }
+        public ApplicationUser? AssignedUser { get; set; }
     }
 
     public sealed partial class WhatsAppMessage
@@ -168,7 +155,7 @@ namespace Domain.Printing
 {
     public sealed partial class PrintDevice
     {
-        public Tabi3User? PairedByUser { get; set; }
+        public ApplicationUser? PairedByUser { get; set; }
     }
 }
 
@@ -185,6 +172,6 @@ namespace Domain.Audit
     public sealed partial class AuditLog
     {
         public Tenant? Tenant { get; set; }
-        public Tabi3User? ActorUser { get; set; }
+        public ApplicationUser? ActorUser { get; set; }
     }
 }

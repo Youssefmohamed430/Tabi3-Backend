@@ -1,5 +1,3 @@
-using Domain.Entities.Common;
-
 namespace Domain.Audit;
 
 public sealed partial class AuditLog : Entity

@@ -1,6 +1,3 @@
-using Domain.Enums;
-using Domain.Entities.Common;
-
 namespace Domain.Customers;
 
 public sealed partial class Customer : TenantEntity

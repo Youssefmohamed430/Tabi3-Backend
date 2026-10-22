@@ -1,6 +1,3 @@
-using Domain.Enums;
-using Domain.Entities.Common;
-
 namespace Domain.Files;
 
 public sealed partial class StoredFile : TenantEntity

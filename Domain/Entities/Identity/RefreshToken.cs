@@ -1,5 +1,3 @@
-using Domain.Entities.Common;
-
 namespace Domain.Identity;
 
 public sealed partial class RefreshToken : Entity, ISoftDeletable

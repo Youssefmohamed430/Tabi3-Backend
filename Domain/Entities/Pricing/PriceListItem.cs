@@ -1,7 +1,3 @@
-using Domain.Enums;
-using Domain.Entities.Common;
-using Domain.ValueObjects;
-
 namespace Domain.Pricing;
 
 public sealed partial class PriceListItem : TenantEntity

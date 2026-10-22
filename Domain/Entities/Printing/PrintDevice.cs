@@ -1,6 +1,3 @@
-using Domain.Entities.Common;
-using Domain.Enums;
-
 namespace Domain.Printing;
 
 public sealed partial class PrintDevice : TenantEntity

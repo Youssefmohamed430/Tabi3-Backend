@@ -1,5 +1,3 @@
-using Domain.Entities.Common;
-
 namespace Domain.Tenants;
 
 public sealed class TenantRole : Entity

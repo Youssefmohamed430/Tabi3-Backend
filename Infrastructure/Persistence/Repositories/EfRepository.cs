@@ -1,9 +1,3 @@
-using Ardalis.Specification;
-using Ardalis.Specification.EntityFrameworkCore;
-using Application.Abstractions.Persistence;
-using Domain.Entities.Common;
-using Microsoft.EntityFrameworkCore;
-
 namespace Infrastructure.Persistence.Repositories;
 
 internal sealed class EfRepository<TEntity>(Tabi3DbContext dbContext) : IRepository<TEntity>

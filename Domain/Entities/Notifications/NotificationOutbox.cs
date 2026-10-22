@@ -1,6 +1,3 @@
-using Domain.Entities.Common;
-using Domain.Enums;
-
 namespace Domain.Notifications;
 
 public sealed partial class NotificationOutbox : Entity

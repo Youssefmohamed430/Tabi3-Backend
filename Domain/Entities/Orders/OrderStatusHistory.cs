@@ -1,6 +1,3 @@
-using Domain.Enums;
-using Domain.Entities.Common;
-
 namespace Domain.Orders;
 
 public sealed partial class OrderStatusHistory : TenantEntity

@@ -1,6 +1,3 @@
-using Domain.Entities.Common;
-using Domain.Enums;
-
 namespace Domain.Identity;
 
 public sealed partial class AccountToken : Entity, ISoftDeletable

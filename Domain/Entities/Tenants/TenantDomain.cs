@@ -1,6 +1,3 @@
-using Domain.Entities.Common;
-using Domain.Enums;
-
 namespace Domain.Tenants;
 
 public sealed partial class TenantDomain : TenantEntity

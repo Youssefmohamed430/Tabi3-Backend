@@ -1,9 +1,3 @@
-using Domain.Constants;
-using Domain.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Infrastructure.Identity;
 
 public static class SuperAdminBootstrapper
@@ -27,7 +21,7 @@ public static class SuperAdminBootstrapper
 
         using var scope = services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Tabi3User>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         if (!await roleManager.RoleExistsAsync(DomainConstants.IdentityRoles.SuperAdmin))
             throw new InvalidOperationException(
@@ -36,7 +30,7 @@ public static class SuperAdminBootstrapper
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            user = new Tabi3User
+            user = new ApplicationUser
             {
                 UserName = userName,
                 Email = email,

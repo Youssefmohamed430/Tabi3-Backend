@@ -1,11 +1,3 @@
-using Domain.Subscriptions;
-using Domain.Tenants;
-using Domain.Identity;
-using Domain.Constants;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Infrastructure.Persistence.Configurations;
 
 public sealed class IdentityRoleConfiguration : IEntityTypeConfiguration<IdentityRole>
@@ -22,9 +14,9 @@ public sealed class IdentityRoleConfiguration : IEntityTypeConfiguration<Identit
     }
 }
 
-public sealed class Tabi3UserConfiguration : IEntityTypeConfiguration<Tabi3User>
+public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
-    public void Configure(EntityTypeBuilder<Tabi3User> b)
+    public void Configure(EntityTypeBuilder<ApplicationUser> b)
     { b.ToTable("asp_net_users"); b.Property(x => x.DisplayName).HasMaxLength(200).IsRequired(); b.Property(x => x.PreferredLanguage).HasMaxLength(8).IsRequired(); b.Property(x => x.PhoneNormalized).HasMaxLength(32); b.HasIndex(x => x.NormalizedEmail).IsUnique().HasFilter("\"NormalizedEmail\" IS NOT NULL"); b.HasIndex(x => x.PhoneNormalized).IsUnique().HasFilter("\"PhoneNormalized\" IS NOT NULL"); }
 }
 

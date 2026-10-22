@@ -1,6 +1,3 @@
-using Domain.Entities.Common;
-using Domain.Enums;
-
 namespace Domain.WhatsApp;
 
 public sealed partial class WhatsAppConversation : TenantEntity

@@ -1,7 +1,3 @@
-using Amazon.S3;
-using Amazon.S3.Model;
-using Application.Abstractions.Storage;
-
 namespace Infrastructure.Storage;
 
 public sealed class SupabaseS3FileStorage(IAmazonS3 s3Client, SupabaseStorageOptions options) : IFileStorage

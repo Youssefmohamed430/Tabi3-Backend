@@ -1,6 +1,3 @@
-using Domain.Enums;
-using Domain.Entities.Common;
-
 namespace Domain.Tenants;
 
 public sealed partial class TenantBusinessHours : TenantEntity

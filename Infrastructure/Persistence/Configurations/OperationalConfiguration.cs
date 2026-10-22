@@ -1,12 +1,3 @@
-using Domain.Audit;
-using Domain.Enums;
-using Domain.Notifications;
-using Domain.Orders;
-using Domain.Printing;
-using Domain.WhatsApp;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Infrastructure.Persistence.Configurations;
 
 public sealed class CustomQuoteConfiguration : IEntityTypeConfiguration<CustomQuote>

@@ -1,8 +1,3 @@
-using Domain.Customers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Domain.Identity;
-
 namespace Infrastructure.Persistence.Configurations;
 
 public sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
