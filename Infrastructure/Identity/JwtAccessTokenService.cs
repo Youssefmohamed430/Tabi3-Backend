@@ -36,9 +36,10 @@ public sealed class JwtAccessTokenService(
         {
             var membership = await dbContext.Set<TenantMembership>()
                 .AsNoTracking()
+                .IgnoreQueryFilters()
                 .Include(item => item.Role)
                 .Include(item => item.Tenant)
-                .SingleOrDefaultAsync(item => item.TenantId == tenantId && item.UserId == user.Id, cancellationToken);
+                .SingleOrDefaultAsync(item => item.TenantId == tenantId && item.UserId == user.Id && !item.IsDeleted, cancellationToken);
 
             if (membership is { Status: MembershipStatus.Active, Tenant.Status: TenantStatus.Active })
             {
@@ -51,8 +52,9 @@ public sealed class JwtAccessTokenService(
             {
                 var customer = await dbContext.Set<Customer>()
                     .AsNoTracking()
+                    .IgnoreQueryFilters()
                     .Include(item => item.Tenant)
-                    .SingleOrDefaultAsync(item => item.TenantId == tenantId && item.PortalUserId == user.Id && item.IsActive, cancellationToken);
+                    .SingleOrDefaultAsync(item => item.TenantId == tenantId && item.PortalUserId == user.Id && item.IsActive && !item.IsDeleted, cancellationToken);
 
                 if (customer is null || customer.Tenant?.Status != TenantStatus.Active)
                     throw new UnauthorizedAccessException("The account has no active access to this tenant.");

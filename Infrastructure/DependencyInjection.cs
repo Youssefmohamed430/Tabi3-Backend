@@ -12,6 +12,8 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentTenant, HttpCurrentTenant>();
         services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<Tabi3DbContext>();
         var jwtKey = configuration["JWTKey"];
         if (string.IsNullOrWhiteSpace(jwtKey) || System.Text.Encoding.UTF8.GetByteCount(jwtKey) < 32)
