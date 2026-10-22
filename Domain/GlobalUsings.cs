@@ -1,5 +1,7 @@
 global using Domain.Audit;
 global using Domain.Constants;
+global using Domain.Common;
+global using Domain.Errors;
 global using Domain.Customers;
 global using Domain.Entities.Common;
 global using Domain.Enums;
@@ -16,3 +18,4 @@ global using Domain.ValueObjects;
 global using Domain.WhatsApp;
 global using Microsoft.AspNetCore.Identity;
 global using System.Security.Cryptography;
+global using System.Text.Json.Serialization;

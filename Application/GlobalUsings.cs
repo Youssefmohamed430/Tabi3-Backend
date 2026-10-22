@@ -1,2 +1,9 @@
 global using Ardalis.Specification;
 global using Domain.Entities.Common;
+global using Domain.Common;
+global using Domain.Errors;
+global using Application.IServices;
+global using Application.Dtos.Members;
+global using Domain.Tenants;
+global using Application.Dtos.Auth;
+global using Application.Dtos.Tenants;
