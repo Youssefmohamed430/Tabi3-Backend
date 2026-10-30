@@ -69,3 +69,10 @@
 - تعريف/تهيئة أدوار `Owner` و`Admin` وباقي أدوار المطبعة ببيانات تأسيسية مؤكدة.
 - اختبارات تكامل للتحقق من العزل بين المطابع وتدفقات الاعتماد والعضوية.
 
+
+## Mapster وSpecifications
+
+- إعدادات التحويل موجودة في Application/Mappings/TenantMappingConfig.cs وApplication/Mappings/MembershipMappingConfig.cs وتطبق عبر Adapt داخل الخدمات.
+- إعداد Tenant يحدد الحقول التي يسمح بتحديثها، ويطبع القيم النصية ويعالج ألوان الهوية غير الصالحة. تحويل طلب التسجيل إلى Tenant يتم أيضًا عبر Mapster، ثم تضبط الخدمة القيم المرتبطة بقرار المراجعة مثل المراجع ووقت الموافقة والتجربة.
+- إعداد العضوية يحول قوائم الصلاحيات إلى JSON ويستبعد الحقول التي لا يحق للـ DTO تغييرها. الخدمة تضبط tenant/user/role والحالة وهوية منفذ الإضافة بعد التحويل.
+- Specifications موجودة خارج Services في Application/Specifications/Tenants/TenantSpecifications.cs وApplication/Specifications/Members/MembershipSpecifications.cs.

@@ -24,8 +24,8 @@ public sealed partial class Tenant : Entity, ISoftDeletable
     public string? ApprovedByUserId { get; set; }
     public DateTimeOffset? TrialStartedAt { get; set; }
     public DateTimeOffset? TrialEndsAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = Domain.Common.EgyptianDateTime.Now;
-    public DateTimeOffset UpdatedAt { get; set; } = Domain.Common.EgyptianDateTime.Now;
+    public DateTimeOffset CreatedAt { get; set; } = EgyptianDateTime.Now;
+    public DateTimeOffset UpdatedAt { get; set; } = EgyptianDateTime.Now;
     public bool IsDeleted { get; set; }
 }
 

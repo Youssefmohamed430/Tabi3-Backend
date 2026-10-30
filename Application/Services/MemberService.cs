@@ -1,5 +1,7 @@
 namespace Application.Services;
 
+using Application.Specifications.Members;
+
 public sealed class MemberService(
     IRepository<TenantMembership> memberships,
     IRepository<TenantRole> tenantRoles,
@@ -48,17 +50,14 @@ public sealed class MemberService(
         if (actorId is null)
             return Result.Failure<TenantMembership>(new Error("Membership.ActorRequired", "تعذر تحديد المستخدم الحالي."));
 
-        var membership = new TenantMembership
-        {
-            TenantId = tenantId,
-            UserId = user.Id,
-            RoleId = role.Id,
-            Status = MembershipStatus.Active,
-            PermissionsJson = SerializePermissions(request.Permissions),
-            InvitedByUserId = actorId,
-            JoinedAt = EgyptianDateTime.Now,
-            CreatedAt = EgyptianDateTime.Now
-        };
+        var membership = request.Adapt<TenantMembership>();
+        membership.TenantId = tenantId;
+        membership.UserId = user.Id;
+        membership.RoleId = role.Id;
+        membership.Status = MembershipStatus.Active;
+        membership.InvitedByUserId = actorId;
+        membership.JoinedAt = EgyptianDateTime.Now;
+        membership.CreatedAt = EgyptianDateTime.Now;
 
         await memberships.AddAsync(membership, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -83,8 +82,8 @@ public sealed class MemberService(
             string.Equals(role.Code, "Customer", StringComparison.OrdinalIgnoreCase))
             return Result.Failure<TenantMembership>(new Error("Membership.InvalidRole", "لا يمكن إسناد هذا الدور كعضوية موظف في المطبعة."));
 
+        request.Adapt(membership);
         membership.RoleId = role.Id;
-        membership.PermissionsJson = SerializePermissions(request.Permissions);
         memberships.Update(membership);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success(membership, "تم تحديث عضوية المستخدم.");
@@ -129,42 +128,4 @@ public sealed class MemberService(
         httpContextAccessor.HttpContext?.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ??
         httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
 
-    private static string? SerializePermissions(IReadOnlyCollection<string>? permissions)
-    {
-        if (permissions is null || permissions.Count == 0)
-            return null;
-        var normalized = permissions.Where(value => !string.IsNullOrWhiteSpace(value))
-            .Select(value => value.Trim())
-            .Distinct(StringComparer.Ordinal)
-            .ToArray();
-        return normalized.Length == 0 ? null : System.Text.Json.JsonSerializer.Serialize(normalized);
-    }
-
-    private sealed class MembersByTenantSpecification : Specification<TenantMembership>
-    {
-        public MembersByTenantSpecification(Guid tenantId) => Query
-            .Where(item => item.TenantId == tenantId)
-            .Include(item => item.User)
-            .Include(item => item.Role)
-            .OrderBy(item => item.CreatedAt);
-    }
-
-    private sealed class MembershipByUserSpecification : Specification<TenantMembership>
-    {
-        public MembershipByUserSpecification(Guid tenantId, string userId) => Query
-            .Where(item => item.TenantId == tenantId && item.UserId == userId);
-    }
-
-    private sealed class MembershipByTenantAndIdSpecification : Specification<TenantMembership>
-    {
-        public MembershipByTenantAndIdSpecification(Guid tenantId, Guid membershipId) => Query
-            .Where(item => item.TenantId == tenantId && item.Id == membershipId)
-            .Include(item => item.Role);
-    }
-
-    private sealed class TenantRoleByCodeSpecification : Specification<TenantRole>
-    {
-        public TenantRoleByCodeSpecification(string roleCode) => Query
-            .Where(role => role.Code == roleCode);
-    }
 }

@@ -1,7 +1,6 @@
 global using Ardalis.Specification;
 global using Domain.Entities.Common;
 global using Domain.Common;
-global using Domain.Errors;
 global using Application.IServices;
 global using Application.Dtos.Members;
 global using Domain.Tenants;
@@ -14,3 +13,4 @@ global using Domain.Enums;
 global using Domain.Constants;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Identity;
+global using Mapster;

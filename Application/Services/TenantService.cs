@@ -1,5 +1,7 @@
 namespace Application.Services;
 
+using Application.Specifications.Tenants;
+
 public sealed class TenantService(
     IRepository<Tenant> tenants,
     IRepository<TenantRegistrationRequest> registrationRequests,
@@ -34,18 +36,7 @@ public sealed class TenantService(
         if (string.IsNullOrWhiteSpace(tenant.Name) || tenant.Name.Trim().Length > 200)
             return Result.Failure<Tenant>(new Error("Tenant.InvalidName", "اسم المطبعة مطلوب وبحد أقصى 200 حرف."));
 
-        existingTenant.Name = tenant.Name.Trim();
-        existingTenant.BusinessName = NormalizeOptional(tenant.BusinessName, 200);
-        existingTenant.PublicDescription = NormalizeOptional(tenant.PublicDescription, 2000);
-        existingTenant.Phone = NormalizeOptional(tenant.Phone, 32);
-        existingTenant.Email = NormalizeOptional(tenant.Email, 254);
-        existingTenant.Address = NormalizeOptional(tenant.Address, 500);
-        existingTenant.LogoObjectKey = NormalizeOptional(tenant.LogoObjectKey, 1024);
-        existingTenant.PrimaryColor = NormalizeColor(tenant.PrimaryColor, "#142D4E");
-        existingTenant.SecondaryColor = NormalizeColor(tenant.SecondaryColor, "#17A6A1");
-        existingTenant.AccentColor = NormalizeColor(tenant.AccentColor, "#F2A541");
-        existingTenant.BackgroundColor = NormalizeColor(tenant.BackgroundColor, "#F7F5F0");
-        existingTenant.UpdatedAt = EgyptianDateTime.Now;
+        tenant.Adapt(existingTenant);
 
         tenants.Update(existingTenant);
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -92,22 +83,12 @@ public sealed class TenantService(
             if (string.IsNullOrWhiteSpace(registration.OwnerUserId) || string.IsNullOrWhiteSpace(registration.Slug))
                 return Result.Failure<Tenant>(new Error("Tenant.RegistrationInvalid", "طلب التسجيل يفتقد بيانات المالك أو الرابط."));
 
-            createdTenant = new Tenant
-            {
-                Name = registration.BusinessName,
-                BusinessName = registration.BusinessName,
-                Slug = registration.Slug,
-                Phone = registration.Phone,
-                Email = registration.Email,
-                OwnerUserId = registration.OwnerUserId,
-                Status = TenantStatus.Active,
-                ApprovedAt = now,
-                ApprovedByUserId = actorId,
-                TrialStartedAt = request.StartTrial ? now : null,
-                TrialEndsAt = request.StartTrial ? now.AddDays(14) : null,
-                CreatedAt = now,
-                UpdatedAt = now
-            };
+            createdTenant = registration.Adapt<Tenant>();
+            createdTenant.Status = TenantStatus.Active;
+            createdTenant.ApprovedAt = now;
+            createdTenant.ApprovedByUserId = actorId;
+            createdTenant.TrialStartedAt = request.StartTrial ? now : null;
+            createdTenant.TrialEndsAt = request.StartTrial ? now.AddDays(14) : null;
             await tenants.AddAsync(createdTenant, cancellationToken);
         }
 
@@ -153,21 +134,4 @@ public sealed class TenantService(
             ? value.ToUpperInvariant()
             : fallback;
 
-    private sealed class TenantByIdSpecification : Specification<Tenant>
-    {
-        public TenantByIdSpecification(Guid tenantId) => Query.Where(item => item.Id == tenantId);
-    }
-
-    private sealed class PendingTenantRegistrationRequestsSpecification : Specification<TenantRegistrationRequest>
-    {
-        public PendingTenantRegistrationRequestsSpecification() => Query
-            .Where(item => item.Status == TenantRegistrationStatus.Submitted || item.Status == TenantRegistrationStatus.PendingReview)
-            .OrderBy(item => item.CreatedAt);
-    }
-
-    private sealed class TenantRegistrationRequestByIdSpecification : Specification<TenantRegistrationRequest>
-    {
-        public TenantRegistrationRequestByIdSpecification(Guid registrationRequestId) => Query
-            .Where(item => item.Id == registrationRequestId);
-    }
 }
