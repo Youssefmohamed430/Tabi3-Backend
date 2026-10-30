@@ -2,6 +2,8 @@ global using Amazon.Runtime;
 global using Amazon.S3;
 global using Amazon.S3.Model;
 global using Application.Abstractions.Identity;
+global using Application.Services;
+global using Application.IServices;
 global using Application.Abstractions.Persistence;
 global using Application.Abstractions.Storage;
 global using Application.Abstractions.Tenants;

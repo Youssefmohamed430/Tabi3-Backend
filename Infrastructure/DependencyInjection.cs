@@ -12,6 +12,8 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IMemberService, MemberService>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentTenant, HttpCurrentTenant>();
         services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<Tabi3DbContext>();

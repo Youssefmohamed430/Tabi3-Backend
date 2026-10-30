@@ -1,7 +1,7 @@
 namespace Domain.Tenants;
 
 
-public sealed partial class Tenant : Entity
+public sealed partial class Tenant : Entity, ISoftDeletable
 {
     
     public string Name { get; set; } = string.Empty;
@@ -26,6 +26,7 @@ public sealed partial class Tenant : Entity
     public DateTimeOffset? TrialEndsAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = Domain.Common.EgyptianDateTime.Now;
     public DateTimeOffset UpdatedAt { get; set; } = Domain.Common.EgyptianDateTime.Now;
+    public bool IsDeleted { get; set; }
 }
 
 
