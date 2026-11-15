@@ -14,9 +14,24 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IMemberService, MemberService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentTenant, HttpCurrentTenant>();
-        services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<Tabi3DbContext>();
+        services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequiredLength = 10;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.AllowedForNewUsers = true;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<Tabi3DbContext>()
+            .AddSignInManager();
         var jwtKey = configuration["JWTKey"];
         if (string.IsNullOrWhiteSpace(jwtKey) || System.Text.Encoding.UTF8.GetByteCount(jwtKey) < 32)
             throw new InvalidOperationException("JWTKey must be configured and contain at least 32 UTF-8 bytes.");

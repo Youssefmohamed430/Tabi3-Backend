@@ -9,6 +9,7 @@ public interface IAuthService
     Task<Result<AuthModel>> LoginAsync(
         string email,
         string password,
+        Guid? tenantId = null,
         CancellationToken cancellationToken = default);
 
     Task<Result<AuthModel>> RefreshSessionAsync(

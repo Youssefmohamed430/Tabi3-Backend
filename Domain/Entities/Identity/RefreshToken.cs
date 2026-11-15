@@ -3,6 +3,7 @@ namespace Domain.Identity;
 public sealed partial class RefreshToken : Entity, ISoftDeletable
 {
     public string UserId { get; set; } = string.Empty;
+    public Guid? TenantId { get; set; }
     public string TokenHash { get; set; } = string.Empty;
     public DateTimeOffset ExpiresAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = Domain.Common.EgyptianDateTime.Now;
